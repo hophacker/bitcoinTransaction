@@ -8,27 +8,32 @@ get '/' do
 	erb :index
 end
 
-get '/data/' do
+get '/data' do
   res = ""
+  ender = "{"
   begin
      # connect to the MySQL server
-     dbh = Mysql.real_connect("localhost", "testuser", "testpass", "test")
+     dbh = Mysql.real_connect("localhost", "root", "", "bitcoin")
      # get server version string and display it
   rescue Mysql::Error => e
      puts "Error code: #{e.errno}"
      puts "Error message: #{e.error}"
      puts "Error SQLSTATE: #{e.sqlstate}" if e.respond_to?("sqlstate")
   else
-     if params[:last]?
-    	res = dbh.query("SELECT * FROM bit WHERE time >" + params[:last])
-     elsif params[:many]?
-     	res = dbh.query("SELECT * FROM bit ORDER BY time DESC LIMIT "+params[:many])
+     if !params[:last].nil?
+    	res = dbh.query("SELECT * FROM stat WHERE time >" + params[:last])
+     elsif !params[:many].nil?
+     	res = dbh.query("SELECT * FROM stat ORDER BY time DESC LIMIT "+params[:many])
      else
-     	res = dbh.query("SELECT * FROM bit ORDER BY time DESC LIMIT 10")
+     	res = dbh.query("SELECT * FROM stat ORDER BY time DESC LIMIT 10")
      end
-    puts res
+     res.each do |row|
+     	ender = "#{ender}  \"#{row[1]}\":{\"total\":#{row[2]}, \"avg\":#{row[3]}, \"max\":#{row[4]}, \"min\":#{row[5]}, \"count\":#{row[6]}}, "
+     end
+     ender = ender + "}"
   ensure
      # disconnect from server
      dbh.close if dbh
   end
+  return ender 
 end
