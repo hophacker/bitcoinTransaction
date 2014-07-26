@@ -1,0 +1,74 @@
+%script{:type => "text/javascript", :src => "/chartjs/Chart.min.js"}
+
+%canvas{id: "chart-canvas", width: "800", height: "400"}
+
+:javascript
+	// x-axis: time (s)
+	// y-axis: volume (btc)
+
+	var data = {
+	labels: ["January", "February", "March", "April", "May", "June", "July"],
+	datasets: [
+		{
+			fillColor: "rgba(151,187,205,0.2)",
+			strokeColor: "rgba(151,187,205,1)",
+			pointColor: "rgba(151,187,205,1)",
+			pointStrokeColor: "#fff",
+			pointHighlightFill: "#fff",
+			pointHighlightStroke: "rgba(151,187,205,1)",
+			data: [28, 48, 40, 19, 86, 27, 90]
+		}
+	]
+	};
+
+	var exampleData1 = [
+		["January",28],
+		["February",48],
+		["March",40],
+		["April",19],
+		["May",86],
+		["June",27],
+		["July",90]
+	];
+
+	var exampleData2 = Object.create(exampleData1);
+	exampleData2.shift();
+	exampleData2.push(["August",20]);
+
+	var datasetColors = {
+		fillColor: "rgba(205,127,151,0.2)",
+		strokeColor: "rgba(205,127,151,1)",
+		pointColor: "rgba(205,127,151,1)",
+		pointStrokeColor: "#fff",
+		pointHighlightFill: "#fff",
+		pointHighlightStroke: "rgba(205,127,151,1)"
+	};
+
+	var chartOptions = {
+		animation: false
+	};
+
+	var getFormattedData = function(points) {
+		var newData = {};
+		newData.datasets = [];
+		newData.datasets.push(datasetColors);
+
+		var xData = [];
+		var yData = [];
+		points.map(function(point) {
+			xData.push(point[0]);
+			yData.push(point[1]);
+		});
+		newData.labels = xData;
+		newData.datasets[0].data = yData;
+
+		return newData;
+	};
+
+	var ctx = document.getElementById("chart-canvas").getContext("2d");
+	var btc_chart = new Chart(ctx);
+	btc_chart.Line(getFormattedData(exampleData1));
+
+	setTimeout(function() {
+		btc_chart.Line(getFormattedData(exampleData2), chartOptions);
+		}, 1000);

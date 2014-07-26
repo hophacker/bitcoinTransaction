@@ -3,9 +3,14 @@ require 'sinatra/main'
 require 'mysql'
 
 enable :inline_templates
+set :views, File.dirname(__FILE__) + '/views'
 
 get '/' do
 	erb :index
+end
+
+get '/graph' do
+  haml :graph
 end
 
 get '/data' do
