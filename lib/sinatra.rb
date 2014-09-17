@@ -35,7 +35,7 @@ get '/data' do
      res.each do |row|
      	ender = "#{ender}  \"#{row[1]}\":{\"total\":#{row[2]}, \"avg\":#{row[3]}, \"max\":#{row[4]}, \"min\":#{row[5]}, \"count\":#{row[6]}}, "
      end
-     comma = ender.length - 2
+     comma = ender.length - 1
      ender = ender[0,comma] + "}"
   ensure
      # disconnect from server
